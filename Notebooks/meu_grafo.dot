@@ -1,0 +1,9 @@
+// O Meu Grafo
+digraph {
+	A [label="Nó A"]
+	B [label="Nó B"]
+	C [label="Nó C"]
+	A -> B
+	B -> C
+	C -> A
+}
