@@ -4,6 +4,4 @@ graph {
 	C [label="Nó C"]
 	A -- B [label="Aresta AB"]
 	B -- C [label="Aresta BC"]
-	node [color=blue shape=circle]
-	edge [color=red]
 }
