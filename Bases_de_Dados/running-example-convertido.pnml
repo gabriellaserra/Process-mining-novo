@@ -1,8 +1,8 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version='1.0' encoding='UTF-8'?>
 <pnml>
   <net type="http://www.yasper.org/specs/epnml-1.1" id="do1">
     <toolspecific tool="Yasper" version="1.2.4020.34351">
-      <roles xmlns="http://www.yasper.org/specs/epnml-1.1/toolspec" />
+      <roles xmlns="http://www.pnml.org/version-2009/grammar/pnmlcoremodel" />
     </toolspecific>
     <transition id="tr4">
       <name>
