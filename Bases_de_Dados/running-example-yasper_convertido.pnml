@@ -1,8 +1,8 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version='1.0' encoding='UTF-8'?>
 <pnml>
   <net type="http://www.yasper.org/specs/epnml-1.1" id="do1">
     <toolspecific tool="Yasper" version="1.2.4020.34351">
-      <roles xmlns="http://www.yasper.org/specs/epnml-1.1/toolspec" />
+      <roles xmlns="http://www.pnml.org/version-2009/grammar/pnmlcoremodel" />
     </toolspecific>
     <transition id="tr4">
       <name>
@@ -72,7 +72,8 @@
         <text>register request</text>
       </name>
       <description>
-        <text>register request</text>
+        <text>register request
+</text>
       </description>
       <graphics>
         <position x="224" y="249" />
@@ -96,7 +97,8 @@
         <text>register to check</text>
       </name>
       <description>
-        <text>register to check</text>
+        <text>register to check
+</text>
       </description>
       <graphics>
         <position x="297" y="297" />
