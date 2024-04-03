@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<pnml>
+  <net type="http://www.yasper.org/specs/epnml-2.0" id="imdf_net_1712149471.1806567" xmlns="http://www.pnml.org/version-2009/grammar/pnml">
+    <page id="pg1">
+      <description>
+        <text />
+      </description>
+      <graphics>
+        <position x="207" y="158" />
+        <dimension x="32" y="32" />
+      </graphics>
+      <transition id="skip_5">
+        <name>
+          <text>skip_5</text>
+        </name>
+        <graphics>
+          <position x="399" y="70" />
+          <dimension x="32" y="32" />
+        </graphics>
+      </transition>
+      <transition id="0b98fa1e-96ac-4134-a6e3-abdc341f97a2">
+        <name>
+          <text>pay compensation</text>
+        </name>
+        <graphics>
+          <position x="16" y="188" />
+          <dimension x="32" y="32" />
+        </graphics>
+      </transition>
+      <transition id="86fa83c8-0e7e-4cd8-8c2e-8e3b39113e2b">
+        <name>
+          <text>register request</text>
+        </name>
+        <graphics>
+          <position x="160" y="98" />
+          <dimension x="32" y="32" />
+        </graphics>
+      </transition>
+      <transition id="tauSplit_3">
+        <name>
+          <text>tauSplit_3</text>
+        </name>
+        <graphics>
+          <position x="59" y="51" />
+          <dimension x="32" y="32" />
+        </graphics>
+      </transition>
+      <transition id="54fc1540-01f6-492e-a9e8-af63d30e6a81">
+        <name>
+          <text>check ticket</text>
+        </name>
+        <graphics>
+          <position x="144" y="16" />
+          <dimension x="32" y="32" />
+        </graphics>
+      </transition>
+      <transition id="6e6e212e-ceea-4c51-8648-42e57f11073c">
+        <name>
+          <text>examine thoroughly</text>
+        </name>
+        <graphics>
+          <position x="129" y="233" />
+          <dimension x="32" y="32" />
+        </graphics>
+      </transition>
+      <transition id="edf680ac-87a6-4e23-b23b-bbe650f53406">
+        <name>
+          <text>decide</text>
+        </name>
+        <graphics>
+          <position x="120" y="300" />
+          <dimension x="32" y="32" />
+        </graphics>
+      </transition>
+      <transition id="ba04ad3f-1aa7-4ea4-a85d-17464f6e06e1">
+        <name>
+          <text>reject request</text>
+        </name>
+        <graphics>
+          <position x="311" y="63" />
+          <dimension x="32" y="32" />
+        </graphics>
+      </transition>
+      <place id="source">
+        <name>
+          <text>source</text>
+        </name>
+        <graphics>
+          <position x="239" y="231" />
+          <dimension x="20" y="20" />
+        </graphics>
+        <initialMarking>
+          <text>1</text>
+        </initialMarking>
+      </place>
+      <place id="sink">
+        <name>
+          <text>sink</text>
+        </name>
+        <graphics>
+          <position x="249" y="241" />
+          <dimension x="20" y="20" />
+        </graphics>
+        <initialMarking>
+          <text>0</text>
+        </initialMarking>
+      </place>
+      <place id="p_5">
+        <name>
+          <text>p_5</text>
+        </name>
+        <graphics>
+          <position x="219" y="211" />
+          <dimension x="20" y="20" />
+        </graphics>
+        <initialMarking>
+          <text>0</text>
+        </initialMarking>
+      </place>
+      <place id="p_4">
+        <name>
+          <text>p_4</text>
+        </name>
+        <graphics>
+          <position x="229" y="221" />
+          <dimension x="20" y="20" />
+        </graphics>
+        <initialMarking>
+          <text>0</text>
+        </initialMarking>
+      </place>
+      <place id="p_6">
+        <name>
+          <text>p_6</text>
+        </name>
+        <graphics>
+          <position x="259" y="251" />
+          <dimension x="20" y="20" />
+        </graphics>
+        <initialMarking>
+          <text>0</text>
+        </initialMarking>
+      </place>
+      <place id="p_8">
+        <name>
+          <text>p_8</text>
+        </name>
+        <graphics>
+          <position x="289" y="281" />
+          <dimension x="20" y="20" />
+        </graphics>
+        <initialMarking>
+          <text>0</text>
+        </initialMarking>
+      </place>
+      <place id="p_9">
+        <name>
+          <text>p_9</text>
+        </name>
+        <graphics>
+          <position x="43" y="35" />
+          <dimension x="20" y="20" />
+        </graphics>
+        <initialMarking>
+          <text>0</text>
+        </initialMarking>
+      </place>
+      <place id="p_10">
+        <name>
+          <text>p_10</text>
+        </name>
+        <graphics>
+          <position x="269" y="261" />
+          <dimension x="20" y="20" />
+        </graphics>
+        <initialMarking>
+          <text>0</text>
+        </initialMarking>
+      </place>
+      <place id="p_11">
+        <name>
+          <text>p_11</text>
+        </name>
+        <graphics>
+          <position x="279" y="271" />
+          <dimension x="20" y="20" />
+        </graphics>
+        <initialMarking>
+          <text>0</text>
+        </initialMarking>
+      </place>
+      <arc id="a1" source="p_8" target="54fc1540-01f6-492e-a9e8-af63d30e6a81" />
+      <arc id="a2" source="54fc1540-01f6-492e-a9e8-af63d30e6a81" target="p_9" />
+      <arc id="a3" source="source" target="86fa83c8-0e7e-4cd8-8c2e-8e3b39113e2b" />
+      <arc id="a4" source="p_5" target="tauSplit_3" />
+      <arc id="a5" source="tauSplit_3" target="p_10" />
+      <arc id="a6" source="p_6" target="skip_5" />
+      <arc id="a7" source="skip_5" target="p_4" />
+      <arc id="a8" source="p_4" target="0b98fa1e-96ac-4134-a6e3-abdc341f97a2" />
+      <arc id="a9" source="0b98fa1e-96ac-4134-a6e3-abdc341f97a2" target="sink" />
+      <arc id="a10" source="86fa83c8-0e7e-4cd8-8c2e-8e3b39113e2b" target="p_5" />
+      <arc id="a11" source="p_9" target="edf680ac-87a6-4e23-b23b-bbe650f53406" />
+      <arc id="a12" source="ba04ad3f-1aa7-4ea4-a85d-17464f6e06e1" target="sink" />
+      <arc id="a13" source="p_10" target="6e6e212e-ceea-4c51-8648-42e57f11073c" />
+      <arc id="a14" source="edf680ac-87a6-4e23-b23b-bbe650f53406" target="p_6" />
+      <arc id="a15" source="6e6e212e-ceea-4c51-8648-42e57f11073c" target="p_11" />
+      <arc id="a16" source="tauSplit_3" target="p_8" />
+      <arc id="a17" source="p_11" target="edf680ac-87a6-4e23-b23b-bbe650f53406" />
+      <arc id="a18" source="p_4" target="ba04ad3f-1aa7-4ea4-a85d-17464f6e06e1" />
+    </page>
+  </net>
+</pnml>
