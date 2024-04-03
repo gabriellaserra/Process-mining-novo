@@ -57,7 +57,7 @@
         <name>
           <text>tauSplit_3</text>
         </name>
-        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="d8d54236-59b9-41e7-8ee6-330e34c62b97"/>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="6f4c95a7-e57b-4ad5-9998-39484f780bb3"/>
       </transition>
       <transition id="1fdd7032-5948-4bd1-a43e-1fe364871caf">
         <name>
@@ -93,7 +93,7 @@
         <name>
           <text>skip_5</text>
         </name>
-        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="4e737436-3241-4773-b1b5-d953b5f323bb"/>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="bb993b54-bd02-436a-8d8a-3be407d39d3e"/>
       </transition>
       <transition id="48940023-0b3b-48c8-a607-ad19043ca5ac">
         <name>
