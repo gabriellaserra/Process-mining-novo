@@ -1,0 +1,5 @@
+case_id;activity;timestamp;costs;resource
+1;register request;2010-12-30 11:02:00+01:00;50;Pete
+1;examine thoroughly;2010-12-31 10:06:00+01:00;400;Sue
+1;check ticket;2011-01-05 15:12:00+01:00;100;Mike
+1;reject request;2011-01-07 14:24:00+01:00;200;Pete
