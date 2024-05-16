@@ -1,16 +1,4 @@
-import tkinter as tk
-
-def mostrar_selecionado():
-    # Obter o índice do item selecionado
-    indice_selecionado = listbox.curselection()
-    # Se algum item estiver selecionado
-    if indice_selecionado:
-        # Obter o valor do item selecionado
-        valor_selecionado = listbox.get(indice_selecionado)
-        # Exibir o valor selecionado
-        label_valor_selecionado.config(text=f"Item selecionado: {valor_selecionado}")
-    else:
-        label_valor_selecionado.config(text="Nenhum item selecionado")
+import tkinter as t
 
 # Criar a janela principal
 root = tk.Tk()
