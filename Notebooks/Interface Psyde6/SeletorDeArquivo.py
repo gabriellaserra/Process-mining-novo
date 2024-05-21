@@ -79,7 +79,7 @@ class SeletorDeArquivo(QDialog):
             log['ID'] = log['ID'].astype(str)
             petri_net, initial_marking, final_marking = pm4py.discover_petri_net_inductive(log, case_id_key='ID', activity_key='Ocorrência', timestamp_key='Início')
             pm4py.view_petri_net(petri_net, initial_marking, final_marking)
-            
+                
     def load_data(self, filepath):
         try:
             if filepath.endswith('.csv'):
