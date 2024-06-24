@@ -1,6 +1,5 @@
 from tkinter import *
 import tkinter as tk
-from tkinter.filedialog import askopenfilename
 import customtkinter as s
 
 from Janela.Janela import *
