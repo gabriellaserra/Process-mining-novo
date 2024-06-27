@@ -53,12 +53,15 @@ class Janela:
         self.lableConform = s.CTkLabel(self.frameConform, text=None, font=('Arial', 20))
         self.lableConform.pack()
 
+        self.image_label = s.CTkLabel(self.frame_grafico, text=None)
+        self.image_label.pack()
+
         #Sliders:
         self.slider_Activities = s.CTkSlider(self.frame_escala, from_=0, to=1, orientation='vertical')
         self.slider_Activities.set(100)
         self.slider_Activities.place(relx=0.3, rely=0.5, anchor= CENTER)
 
-        self.slider_Paths = s.CTkSlider(self.frame_escala,from_=0.95, to=0, orientation='vertical')
+        self.slider_Paths = s.CTkSlider(self.frame_escala,from_=0.9, to=0, orientation='vertical')
         self.slider_Paths.set(0)
         self.slider_Paths.place(relx=0.7, rely=0.5, anchor=CENTER)
 
@@ -121,65 +124,61 @@ class Janela:
         raizColunas.transient(self.raiz)
         raizColunas.grab_set()
 
-
         self.listID = s.CTkComboBox(raizColunas, values=self.dataframe.columns)
         self.listID.pack()
         
         self.listTimestamp = s.CTkComboBox(raizColunas, values=self.dataframe.columns)
-        self.strataimestamp = s.StringVar()
         self.listTimestamp.pack()
 
         self.listActivity = s.CTkComboBox(raizColunas, values=self.dataframe.columns)
         self.listActivity.pack()
 
-        print(self.listTimestamp.get())
-
         botaoAplicar = s.CTkButton(raizColunas, text='Aplicar', command=lambda: self.define_chaves())
         botaoAplicar.pack()
+        
         return
 
     
     def define_chaves(self):
+        ##REDEFININDO AS VARIÁVEIS PORQUE PELO VISTO O TKINTER NÃO RECONHECE COMO VARIÁVEL DA JANELA PRINCIPAL OS WIDGETS CRIADOS EM JANELAS TIPO Toplevel()
+        self.ID = self.listID.get()
+        self.Timestamp = self.listTimestamp.get()
+        self.Activity = self.listActivity.get()
+        ###################################################################################################################################################
         
         self.log = pm4py.format_dataframe(self.dataframe, case_id= self.listID.get(), activity_key= self.listActivity.get(), timestamp_key=self.listTimestamp.get())
-
+        return
 
 
     def exibe_grafico(self, caminho):
-        self.lableimg_atual = None
         caminho = './'+caminho
-        imagem = Image.open(caminho)
+        if caminho:
+            tamanho_grafico_largura = 1340 
+            tamanho_grafico_altura = 110
+            # Carrega a nova imagem
+            pil_image = Image.open(caminho)
+            ctk_image = s.CTkImage(light_image=pil_image, dark_image=pil_image, size= (tamanho_grafico_largura, tamanho_grafico_altura))
 
-        # Define o tamanho fixo para todos os gráficos
-        tamanho_grafico_largura = 1340 
-        tamanho_grafico_altura = 110
-
-        # Redimensione a imagem do gráfico para o tamanho fixo
-        imagem_redimensionada = imagem.resize((tamanho_grafico_largura, tamanho_grafico_altura))
-        # Remova o label antigo, se existir
-        if self.lableimg_atual:
-            self.lableimg_atual.destroy()
-
-        # Crie um novo label para o gráfico
-        fig_grafico = s.CTkImage(light_image=imagem_redimensionada, dark_image=imagem_redimensionada, size= (tamanho_grafico_largura, tamanho_grafico_altura))
-        self.lableimg_atual = s.CTkLabel(self.frame_grafico, text=None, image=fig_grafico)
-        self.lableimg_atual.pack(side='top')
+            # Atualiza o rótulo com a nova imagem
+            self.image_label.configure(image=ctk_image)
+            self.image_label.image = ctk_image
         return
     
     def filtra_grafo_por_variantes(self):
-        self.log.fillna({'Início': 0},inplace=True)
-        self.log['Início'] = pd.to_datetime(self.log['Início'])
-        self.log['ID'] = self.log['ID'].astype(str)
+        self.log.fillna({self.Timestamp: 0},inplace=True)
+        self.log[self.Timestamp] = pd.to_datetime(self.log[self.Timestamp])
+        self.log[self.ID] = self.log[self.ID].astype(str)
+        self.log[self.Activity] = self.log[self.Activity].astype(str)
 
-        self.filtrado = pm4py.filtering.filter_variants_by_coverage_percentage(self.log, self.slider_Paths.get(), case_id_key=self.listID.get(), activity_key=self.listActivity.get(), timestamp_key=self.listTimestamp.get())
-        self.filtrado = self.filtrado.drop('Unnamed: 0', axis=1, inplace=True)
+        self.filtrado = pm4py.filtering.filter_variants_by_coverage_percentage(self.log, self.slider_Paths.get(), case_id_key=self.ID, activity_key=self.Activity, timestamp_key=self.Timestamp)
+        # self.filtrado = self.filtrado.drop('Unnamed: 0', axis=1, inplace=True)
         
     
     def cria_grafo_duracao(self):
     ############################################### FILTRA OS PATHS ###############################################
         self.filtra_grafo_por_variantes()
 
-        performance_dfg, start_activities, end_activities = pm4py.discover_performance_dfg(self.filtrado, case_id_key=self.listID.get(), activity_key=self.listActivity.get(), timestamp_key=self.listTimestamp.get())
+        performance_dfg, start_activities, end_activities = pm4py.discover_performance_dfg(self.filtrado, case_id_key=self.ID, activity_key=self.Activity, timestamp_key=self.Timestamp)
     ################################ ESSE PARAMETRO COLOCA NO GRÁFICO O TEMPO QUE CADA ATIVIDADE DUROU ###################################
         
         pm4py.vis.save_vis_performance_dfg(performance_dfg, start_activities, end_activities, "grafico_Duracao.png") #serv_time – (optional) provides the activities’ service times, used to decorate the graph
