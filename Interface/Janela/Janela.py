@@ -72,13 +72,13 @@ class Janela:
         self.botaoConform = s.CTkButton(self.frame_lateral, text='Análise de Conformidade') #, command=lambda: analize_conformidade()
         self.botaoConform.pack()
 
-        self.botaoFrequencia = s.CTkButton(self.frameTOP, text="Gráfico de Frequência", image=self.arqFreq, hover_color=None, fg_color="transparent") #, command=lambda: cria_grafo_dfg(log)
+        self.botaoFrequencia = s.CTkButton(self.frameTOP, text="Gráfico de Frequência", image=self.arqFreq, hover_color=None, fg_color="transparent", command=lambda: self.cria_grafo_dfg(log))
         self.botaoFrequencia.pack(side='left', pady=10)
 
         self.botaoPerformance = s.CTkButton(self.frameTOP, text="Gráfico de Performace", image=self.arqPerform, hover_color=None, fg_color="transparent", command=lambda: self.cria_grafo_duracao()) #
         self.botaoPerformance.pack(side='left', pady=10)
 
-        self.botaoPetriNet = s.CTkButton(self.frameTOP, text="Gráfico PetriNet", image=self.arqPetri, hover_color=None, fg_color="transparent") #, command=lambda: cria_grafo_petri_net(log)
+        self.botaoPetriNet = s.CTkButton(self.frameTOP, text="Gráfico PetriNet", image=self.arqPetri, hover_color=None, fg_color="transparent", command=lambda: self.cria_grafo_petri_net(log))
         self.botaoPetriNet.pack(side='left', pady=10)
 
         #Switch:
@@ -99,7 +99,7 @@ class Janela:
     def escolhe_arquivo(self):
         self.caminho_do_arquivo = askopenfilename(filetypes=[ ("Arquivo Excel", "*.xlsx"),("Arquivo CSV", "*.csv"), ("Arquivo XES", '*.xes')])
         if self.caminho_do_arquivo:
-            self.label_arquivo.configure(text=f"Arquivo selecionado: {self.caminho_do_arquivo}") # Calma é pra não estar definido msm
+            self.label_arquivo.configure(text=f"Arquivo selecionado: {self.caminho_do_arquivo}")
     
         tipoArq = self.caminho_do_arquivo.split('.')
         try:
@@ -128,9 +128,14 @@ class Janela:
         self.listID.set("ID")
         self.listID.pack()
         
+        self.listTimestampInicio = s.CTkComboBox(raizColunas, values=self.dataframe.columns)
+        self.listTimestampInicio.set("Timestamp: Início")
+        self.listTimestampInicio.pack()
+
         self.listTimestamp = s.CTkComboBox(raizColunas, values=self.dataframe.columns)
-        self.listTimestamp.set("Timestamp")
+        self.listTimestamp.set("Timestamp: Final")
         self.listTimestamp.pack()
+
 
         self.listActivity = s.CTkComboBox(raizColunas, values=self.dataframe.columns)
         self.listActivity.set("Activity")
@@ -189,4 +194,33 @@ class Janela:
         self.lable_auxImagem.configure(text="Imagem do DFG salva como 'grafico_Duracao.png'")
 
         self.exibe_grafico("grafico_Duracao.png")
+        return
+    
+    def cria_grafo_dfg(self):
+    ############################################### FILTRA OS PATHS ###############################################
+        self.filtra_grafo_por_variantes()
+    #############################################################################################################################################################################
+        dfg, start_activities, end_activities = pm4py.discover_dfg(self.filtrado, case_id_key=self.ID, activity_key=self.Activity, timestamp_key=self.Timestamp)
+        pm4py.vis.save_vis_dfg(dfg, start_activities, end_activities, "grafico.png")#, rankdir='TB'
+
+        self.lable_auxImagem.configure(text="Imagem do DFG salva como 'grafico.png'")
+
+        self.exibe_grafico("grafico.png")
+        return
+    
+    def cria_grafo_petri_net(self):
+        pn, ini, fim = pm4py.discover_petri_net_inductive(self.log)
+        pm4py.vis.save_vis_petri_net(pn, ini, fim, "grafico_PetriNet.png")
+
+        self.lable_auxImagem.configure(text="Imagem do rede de Petri salva como 'grafico_PetriNet.png'")
+
+        self.exibe_grafico("grafico_PetriNet.png")
+        return
+    
+    def analize_conformidade(self):
+        # log['ID'] = log['ID'].astype(str)
+        self.caminho_do_modelo = askopenfilename(filetypes=[("Arquivo Pnml", "*.pnml")])
+        rede, inicial, final = pmnl_importer.apply(self.caminho_do_modelo)
+        conf_result = pm4py.fitness_token_based_replay(log, rede, inicial, final, case_id_key=self.ID, activity_key=self.Activity, timestamp_key=self.Timestamp)
+        self.lableConform.configure(text=f'mean fittness: {conf_result["average_trace_fitness"]} \n percentage fittness {conf_result["percentage_of_fitting_traces"]}')
         return
