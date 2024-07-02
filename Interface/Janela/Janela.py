@@ -125,12 +125,15 @@ class Janela:
         raizColunas.grab_set()
 
         self.listID = s.CTkComboBox(raizColunas, values=self.dataframe.columns)
+        self.listID.set("ID")
         self.listID.pack()
         
         self.listTimestamp = s.CTkComboBox(raizColunas, values=self.dataframe.columns)
+        self.listTimestamp.set("Timestamp")
         self.listTimestamp.pack()
 
         self.listActivity = s.CTkComboBox(raizColunas, values=self.dataframe.columns)
+        self.listActivity.set("Activity")
         self.listActivity.pack()
 
         botaoAplicar = s.CTkButton(raizColunas, text='Aplicar', command=lambda: self.define_chaves())
