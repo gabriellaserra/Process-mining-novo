@@ -51,7 +51,7 @@ class Janela:
         self.label_escalaP.place(relx=0.7, rely=0.1, anchor= CENTER)
 
         self.lableConform = s.CTkLabel(self.frameConform, text=None, font=('Arial', 20))
-        self.lableConform.pack()
+        self.lableConform.pack(side = 'left')
 
         self.image_label = s.CTkLabel(self.frame_grafico, text=None)
         self.image_label.pack()
@@ -69,16 +69,16 @@ class Janela:
         self.botaoArquivo = s.CTkButton(self.frameTOP, text= "Seleção de arquivos" , image=self.arq, hover_color=None, fg_color="black", command= lambda: self.escolhe_arquivo()) #
         self.botaoArquivo.pack(side='left')
 
-        self.botaoConform = s.CTkButton(self.frame_lateral, text='Análise de Conformidade') #, command=lambda: analize_conformidade()
+        self.botaoConform = s.CTkButton(self.frame_lateral, text='Análise de Conformidade', command=lambda: self.analize_conformidade())
         self.botaoConform.pack()
 
-        self.botaoFrequencia = s.CTkButton(self.frameTOP, text="Gráfico de Frequência", image=self.arqFreq, hover_color=None, fg_color="transparent", command=lambda: self.cria_grafo_dfg(log))
+        self.botaoFrequencia = s.CTkButton(self.frameTOP, text="Gráfico de Frequência", image=self.arqFreq, hover_color=None, fg_color="transparent", command=lambda: self.cria_grafo_dfg())
         self.botaoFrequencia.pack(side='left', pady=10)
 
         self.botaoPerformance = s.CTkButton(self.frameTOP, text="Gráfico de Performace", image=self.arqPerform, hover_color=None, fg_color="transparent", command=lambda: self.cria_grafo_duracao()) #
         self.botaoPerformance.pack(side='left', pady=10)
 
-        self.botaoPetriNet = s.CTkButton(self.frameTOP, text="Gráfico PetriNet", image=self.arqPetri, hover_color=None, fg_color="transparent", command=lambda: self.cria_grafo_petri_net(log))
+        self.botaoPetriNet = s.CTkButton(self.frameTOP, text="Gráfico PetriNet", image=self.arqPetri, hover_color=None, fg_color="transparent", command=lambda: self.cria_grafo_petri_net())
         self.botaoPetriNet.pack(side='left', pady=10)
 
         #Switch:
@@ -153,9 +153,13 @@ class Janela:
         self.Timestamp = self.listTimestamp.get()
         self.Activity = self.listActivity.get()
         ###################################################################################################################################################
-        
-        self.log = pm4py.format_dataframe(self.dataframe, case_id= self.listID.get(), activity_key= self.listActivity.get(), timestamp_key=self.listTimestamp.get())
-        return
+        try:
+            self.log = pm4py.format_dataframe(self.dataframe, case_id= self.listID.get(), activity_key= self.listActivity.get(), timestamp_key=self.listTimestamp.get())
+
+            self.media_duracao_atividades()
+        except:
+            self.lable_auxImagem.configure(text='Selecione uma coluna que exista no arquivo')
+        return 
 
 
     def exibe_grafico(self, caminho):
@@ -221,6 +225,16 @@ class Janela:
         # log['ID'] = log['ID'].astype(str)
         self.caminho_do_modelo = askopenfilename(filetypes=[("Arquivo Pnml", "*.pnml")])
         rede, inicial, final = pmnl_importer.apply(self.caminho_do_modelo)
-        conf_result = pm4py.fitness_token_based_replay(log, rede, inicial, final, case_id_key=self.ID, activity_key=self.Activity, timestamp_key=self.Timestamp)
+        conf_result = pm4py.fitness_token_based_replay(self.log, rede, inicial, final, case_id_key=self.ID, activity_key=self.Activity, timestamp_key=self.Timestamp)
         self.lableConform.configure(text=f'mean fittness: {conf_result["average_trace_fitness"]} \n percentage fittness {conf_result["percentage_of_fitting_traces"]}')
+        return
+    
+    def media_duracao_atividades(self):
+        media_atividades= pm4py.get_service_time(self.log, start_timestamp_key=self.listTimestampInicio.get(), aggregation_measure='average')
+
+        raizMedia= s.CTkToplevel(self.raiz)
+        raizMedia.transient(self.raiz)
+
+        labelMedia = s.CTkLabel(raizMedia, text = media_atividades)
+        labelMedia.pack()
         return
