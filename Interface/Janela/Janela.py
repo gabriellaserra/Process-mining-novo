@@ -30,14 +30,14 @@ class Janela:
         self.frameConform = s.CTkFrame(raiz)
         self.frameConform.pack(side='right', fill='both')
 
-        #Imagens dos botões:
+        # Imagens dos botões:
         self.arq = s.CTkImage(light_image=Image.open('Interface\\Janela\\iconArq.png'), dark_image=Image.open('Interface\\Janela\\iconArq.png'), size=(80,80))
         self.arqPerform = s.CTkImage(light_image=Image.open('Interface\\Janela\\iconPerformance.png'), dark_image=Image.open('Interface\\Janela\\iconPerformanceDark.png'), size=(80,80))
         self.arqFreq = s.CTkImage(light_image=Image.open('Interface\\Janela\\iconFreq.png'), dark_image=Image.open('Interface\\Janela\\iconFreqDark.png'), size=(80,80))
         self.arqPetri = s.CTkImage(light_image=Image.open('Interface\\Janela\\iconPetri.png'), dark_image=Image.open('Interface\\Janela\\iconPetriDark.png'), size=(80,80))
         self.arqNot = s.CTkImage(light_image=Image.open('Interface\\Janela\\mode.png'), dark_image=Image.open('Interface\\Janela\\modeDark.png'), size=(20,20))
 
-        #Labels:
+        # Labels:
         self.label_arquivo = s.CTkLabel(self.frameTOP, text="Nenhum arquivo selecionado")
         self.label_arquivo.pack(side='bottom')
 
@@ -53,7 +53,7 @@ class Janela:
         self.image_label = s.CTkLabel(self.frame_grafico, text=None)
         self.image_label.pack()
 
-        #Sliders:
+        # Sliders:
         self.slider_Activities = s.CTkSlider(self.frame_escala, from_=0, to=1, orientation='vertical')
         self.slider_Activities.set(100)
         self.slider_Activities.place(relx=0.3, rely=0.5, anchor= CENTER)
@@ -62,7 +62,7 @@ class Janela:
         self.slider_Paths.set(0)
         self.slider_Paths.place(relx=0.7, rely=0.5, anchor=CENTER)
 
-        #Botões: 
+        # Botões: 
         self.botaoArquivo = s.CTkButton(self.frameTOP, text= "Seleção de arquivos" , image=self.arq, hover_color=None, fg_color="black", command= lambda: self.escolhe_arquivo())
         self.botaoArquivo.pack(side='left')
 
@@ -78,10 +78,8 @@ class Janela:
         self.botaoPetriNet = s.CTkButton(self.frameTOP, text="Gráfico PetriNet", image=self.arqPetri, hover_color=None, fg_color="transparent", command=lambda: self.cria_grafo_petri_net())
         self.botaoPetriNet.pack(side='left', pady=10)
 
-        #Switch:
-        self.switch_var = s.StringVar(value="off")
-        self.switch = s.CTkSwitch(self.frameTOP, text=None, variable=self.switch_var, onvalue="on", offvalue="off", command=lambda: self.modo_escuro())
-        self.switch.pack(side='right')
+        # Setando sempre o modo noturno:
+        s.set_appearance_mode("Dark")
 
         return
 
