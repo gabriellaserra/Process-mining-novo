@@ -41,9 +41,6 @@ class Janela:
         self.label_arquivo = s.CTkLabel(self.frameTOP, text="Nenhum arquivo selecionado")
         self.label_arquivo.pack(side='bottom')
 
-        self.lable_auxImagem= s.CTkLabel(self.frameTOP, text="Nenhma Imagem Gerada")
-        self.lable_auxImagem.pack(side='bottom')
-
         self.label_escalaA = s.CTkLabel(self.frame_escala, text="Activities")
         self.label_escalaA.place(relx=0.3, rely=0.1, anchor= CENTER)
 
@@ -66,7 +63,7 @@ class Janela:
         self.slider_Paths.place(relx=0.7, rely=0.5, anchor=CENTER)
 
         #Botões: 
-        self.botaoArquivo = s.CTkButton(self.frameTOP, text= "Seleção de arquivos" , image=self.arq, hover_color=None, fg_color="black", command= lambda: self.escolhe_arquivo()) #
+        self.botaoArquivo = s.CTkButton(self.frameTOP, text= "Seleção de arquivos" , image=self.arq, hover_color=None, fg_color="black", command= lambda: self.escolhe_arquivo())
         self.botaoArquivo.pack(side='left')
 
         self.botaoConform = s.CTkButton(self.frame_lateral, text='Análise de Conformidade', command=lambda: self.analize_conformidade())
@@ -114,34 +111,34 @@ class Janela:
             self.dataframe.drop('Unnamed: 0', axis = 1, inplace=True)
 
             return self.janela_define_chaves()
-        except Exception as error:
-            self.lable_auxImagem.configure(text=f"NÃO CONSEGUI TRANSFORMAR EM GRÁFICO. UMA COLUNA NÃO FOI ENCONTRADA NESSE ARQUIVO.\n erro: {error}")
+        except Exception as e:
+            self.avisos(f"Selecione um arquivo!\nerro: {e}")
             
         return
     
     def janela_define_chaves(self):
-        raizColunas= s.CTkToplevel(self.raiz)
-        raizColunas.transient(self.raiz)
-        raizColunas.grab_set()
+        self.raizColunas= s.CTkToplevel(self.raiz)
+        self.raizColunas.transient(self.raiz)
+        self.raizColunas.grab_set()
 
-        self.listID = s.CTkComboBox(raizColunas, values=self.dataframe.columns)
-        self.listID.set("ID")
+        self.listID = s.CTkComboBox(self.raizColunas, values=self.dataframe.columns)
+        self.listID.set("Case ID")
         self.listID.pack()
         
-        self.listTimestampInicio = s.CTkComboBox(raizColunas, values=self.dataframe.columns)
+        self.listTimestampInicio = s.CTkComboBox(self.raizColunas, values=self.dataframe.columns)
         self.listTimestampInicio.set("Timestamp: Início")
         self.listTimestampInicio.pack()
 
-        self.listTimestamp = s.CTkComboBox(raizColunas, values=self.dataframe.columns)
+        self.listTimestamp = s.CTkComboBox(self.raizColunas, values=self.dataframe.columns)
         self.listTimestamp.set("Timestamp: Final")
         self.listTimestamp.pack()
 
 
-        self.listActivity = s.CTkComboBox(raizColunas, values=self.dataframe.columns)
+        self.listActivity = s.CTkComboBox(self.raizColunas, values=self.dataframe.columns)
         self.listActivity.set("Activity")
         self.listActivity.pack()
 
-        botaoAplicar = s.CTkButton(raizColunas, text='Aplicar', command=lambda: self.define_chaves())
+        botaoAplicar = s.CTkButton(self.raizColunas, text='Aplicar', command=lambda: self.define_chaves())
         botaoAplicar.pack()
         
         return
@@ -152,14 +149,15 @@ class Janela:
         self.ID = self.listID.get()
         self.Timestamp = self.listTimestamp.get()
         self.Activity = self.listActivity.get()
-        ###################################################################################################################################################
+        ########################################################################################################################################
         try:
             self.log = pm4py.format_dataframe(self.dataframe, case_id= self.listID.get(), activity_key= self.listActivity.get(), timestamp_key=self.listTimestamp.get())
 
-            self.media_duracao_atividades()
+            # self.media_duracao_atividades() não vai mais ser chamada aqui
         except:
-            self.lable_auxImagem.configure(text='Selecione uma coluna que exista no arquivo')
-        return 
+            self.avisos('Selecione uma coluna que exista no arquivo')
+
+        return self.raizColunas.destroy()
 
 
     def exibe_grafico(self, caminho):
@@ -177,46 +175,49 @@ class Janela:
         return
     
     def filtra_grafo_por_variantes(self):
-        self.log.fillna({self.Timestamp: 0},inplace=True)
-        self.log[self.Timestamp] = pd.to_datetime(self.log[self.Timestamp])
-        self.log[self.ID] = self.log[self.ID].astype(str)
-        self.log[self.Activity] = self.log[self.Activity].astype(str)
+        try:
+            self.log.fillna({self.Timestamp: 0},inplace=True)
+            self.log[self.Timestamp] = pd.to_datetime(self.log[self.Timestamp])
+            self.log[self.ID] = self.log[self.ID].astype(str)
+            self.log[self.Activity] = self.log[self.Activity].astype(str)
+        except AttributeError:
+            self.avisos('Nenhum arquivo selecionado:')
+
+        except Exception as e:
+            self.avisos(type(e).__name__)
 
         self.filtrado = pm4py.filtering.filter_variants_by_coverage_percentage(self.log, self.slider_Paths.get(), case_id_key=self.ID, activity_key=self.Activity, timestamp_key=self.Timestamp)
         # self.filtrado = self.filtrado.drop('Unnamed: 0', axis=1, inplace=True)
+        return
         
     
     def cria_grafo_duracao(self):
     ############################################### FILTRA OS PATHS ###############################################
         self.filtra_grafo_por_variantes()
-
+    ###############################################################################################################
         performance_dfg, start_activities, end_activities = pm4py.discover_performance_dfg(self.filtrado, case_id_key=self.ID, activity_key=self.Activity, timestamp_key=self.Timestamp)
     ################################ ESSE PARAMETRO COLOCA NO GRÁFICO O TEMPO QUE CADA ATIVIDADE DUROU ###################################
-        
         pm4py.vis.save_vis_performance_dfg(performance_dfg, start_activities, end_activities, "grafico_Duracao.png") #serv_time – (optional) provides the activities’ service times, used to decorate the graph
         ##----------------------------------------------------------------------------------------------------------------------------------------
-        self.lable_auxImagem.configure(text="Imagem do DFG salva como 'grafico_Duracao.png'")
-
         self.exibe_grafico("grafico_Duracao.png")
         return
     
     def cria_grafo_dfg(self):
     ############################################### FILTRA OS PATHS ###############################################
         self.filtra_grafo_por_variantes()
-    #############################################################################################################################################################################
+    ###############################################################################################################
         dfg, start_activities, end_activities = pm4py.discover_dfg(self.filtrado, case_id_key=self.ID, activity_key=self.Activity, timestamp_key=self.Timestamp)
         pm4py.vis.save_vis_dfg(dfg, start_activities, end_activities, "grafico.png")#, rankdir='TB'
-
-        self.lable_auxImagem.configure(text="Imagem do DFG salva como 'grafico.png'")
 
         self.exibe_grafico("grafico.png")
         return
     
     def cria_grafo_petri_net(self):
-        pn, ini, fim = pm4py.discover_petri_net_inductive(self.log)
+    ############################################### FILTRA OS PATHS ###############################################
+        self.filtra_grafo_por_variantes()
+    ###############################################################################################################
+        pn, ini, fim = pm4py.discover_petri_net_inductive(self.filtrado)
         pm4py.vis.save_vis_petri_net(pn, ini, fim, "grafico_PetriNet.png")
-
-        self.lable_auxImagem.configure(text="Imagem do rede de Petri salva como 'grafico_PetriNet.png'")
 
         self.exibe_grafico("grafico_PetriNet.png")
         return
@@ -237,4 +238,21 @@ class Janela:
 
         labelMedia = s.CTkLabel(raizMedia, text = media_atividades)
         labelMedia.pack()
+        return
+    
+    # pensando se não faço isso ser uma classe
+    def avisos(self, nome_do_erro):
+        warning_window = s.CTkToplevel(self.raiz)
+        warning_window.geometry("300x150")
+        warning_window.title("Aviso")
+
+        warning_window.transient(self.raiz)
+        warning_window.grab_set()
+
+        warning_label = s.CTkLabel(warning_window, text=f"Ocorreu um erro do tipo: \n{nome_do_erro}", text_color="red")
+        warning_label.pack(pady=20, padx=20)
+
+        
+        close_button = s.CTkButton(warning_window, text="Fechar", command=warning_window.destroy)
+        close_button.pack(pady=10)
         return
