@@ -54,8 +54,8 @@ class Janela:
         self.image_label.pack()
 
         # Sliders:
-        self.slider_Activities = s.CTkSlider(self.frame_escala, from_=0, to=1, orientation='vertical')
-        self.slider_Activities.set(100)
+        self.slider_Activities = s.CTkSlider(self.frame_escala, from_=1, to=0, orientation='vertical')
+        self.slider_Activities.set(0)
         self.slider_Activities.place(relx=0.3, rely=0.5, anchor= CENTER)
 
         self.slider_Paths = s.CTkSlider(self.frame_escala,from_=0.9, to=0, orientation='vertical')
@@ -127,9 +127,9 @@ class Janela:
         self.listTimestampInicio.set("Timestamp: Início")
         self.listTimestampInicio.pack()
 
-        self.listTimestamp = s.CTkComboBox(self.raizColunas, values=self.dataframe.columns)
-        self.listTimestamp.set("Timestamp: Final")
-        self.listTimestamp.pack()
+        self.listTimestampFinal = s.CTkComboBox(self.raizColunas, values=self.dataframe.columns)
+        self.listTimestampFinal.set("Timestamp: Final")
+        self.listTimestampFinal.pack()
 
 
         self.listActivity = s.CTkComboBox(self.raizColunas, values=self.dataframe.columns)
@@ -145,11 +145,11 @@ class Janela:
     def define_chaves(self):
         ##REDEFININDO AS VARIÁVEIS PORQUE PELO VISTO O TKINTER NÃO RECONHECE COMO VARIÁVEL DA JANELA PRINCIPAL OS WIDGETS CRIADOS EM JANELAS TIPO Toplevel()
         self.ID = self.listID.get()
-        self.Timestamp = self.listTimestamp.get()
+        self.Timestamp = self.listTimestampFinal.get()
         self.Activity = self.listActivity.get()
         ########################################################################################################################################
         try:
-            self.log = pm4py.format_dataframe(self.dataframe, case_id= self.listID.get(), activity_key= self.listActivity.get(), timestamp_key=self.listTimestamp.get())
+            self.log = pm4py.format_dataframe(self.dataframe, case_id= self.listID.get(), activity_key= self.listActivity.get(), timestamp_key=self.listTimestampFinal.get())
 
             # self.media_duracao_atividades() não vai mais ser chamada aqui
         except:
@@ -184,14 +184,32 @@ class Janela:
         except Exception as e:
             self.avisos(type(e).__name__)
 
-        self.filtrado = pm4py.filtering.filter_variants_by_coverage_percentage(self.log, self.slider_Paths.get(), case_id_key=self.ID, activity_key=self.Activity, timestamp_key=self.Timestamp)
+        self.filtradoPath = pm4py.filtering.filter_variants_by_coverage_percentage(self.log, self.slider_Paths.get(), case_id_key=self.ID, activity_key=self.Activity, timestamp_key=self.Timestamp)
         # self.filtrado = self.filtrado.drop('Unnamed: 0', axis=1, inplace=True)
         return
-        
+
     
+       
+    def filtra_grafo_por_atividades(self):
+        # Obter valor do slider
+        valor = self.slider_Activities.get()
+        # Obter a contagem das atividades
+        activity_counts = pm4py.stats.get_event_attribute_values(self.filtradoPath, attribute=self.Activity,case_id_key=self.ID)
+        # Porcentagem de acordo com o maximo de atividades
+        maximo = max(activity_counts.values()) * valor
+
+        # Imprimir as contagens das atividades
+        for activity, count in activity_counts.items():
+            if count < maximo:
+                self.filtrado = self.filtradoPath[self.filtradoPath[self.Activity]!=activity]
+            else:
+                self.filtrado = self.filtradoPath
+        return 
+
     def cria_grafo_duracao(self):
     ############################################### FILTRA OS PATHS ###############################################
         self.filtra_grafo_por_variantes()
+        self.filtra_grafo_por_atividades()
     ###############################################################################################################
         performance_dfg, start_activities, end_activities = pm4py.discover_performance_dfg(self.filtrado, case_id_key=self.ID, activity_key=self.Activity, timestamp_key=self.Timestamp)
     ################################ ESSE PARAMETRO COLOCA NO GRÁFICO O TEMPO QUE CADA ATIVIDADE DUROU ###################################
