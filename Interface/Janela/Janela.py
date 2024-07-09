@@ -10,6 +10,7 @@ import pandas as pd
 
 class Janela:
     def __init__(self, raiz):
+
         #Frame da seleção de arquivos e gráficos:
         self.raiz = raiz
         self.frameTOP = s.CTkFrame(raiz)
@@ -172,7 +173,7 @@ class Janela:
             self.image_label.image = ctk_image
         return
     
-    def filtra_grafo_por_variantes(self):
+    def filtra__por_variantes(self):
         try:
             self.log.fillna({self.Timestamp: 0},inplace=True)
             self.log[self.Timestamp] = pd.to_datetime(self.log[self.Timestamp])
@@ -190,13 +191,13 @@ class Janela:
 
     
        
-    def filtra_grafo_por_atividades(self):
+    def filtra_caio_por_atividades(self):
         # Obter valor do slider
-        valor = self.slider_Activities.get()
+        bet = self.slider_Activities.get()
         # Obter a contagem das atividades
         activity_counts = pm4py.stats.get_event_attribute_values(self.filtradoPath, attribute=self.Activity,case_id_key=self.ID)
         # Porcentagem de acordo com o maximo de atividades
-        maximo = max(activity_counts.values()) * valor
+        maximo = max(activity_counts.values()) * bet
 
         # Imprimir as contagens das atividades
         for activity, count in activity_counts.items():
@@ -208,8 +209,8 @@ class Janela:
 
     def cria_grafo_duracao(self):
     ############################################### FILTRA OS PATHS ###############################################
-        self.filtra_grafo_por_variantes()
-        self.filtra_grafo_por_atividades()
+        self.filtra__por_variantes()
+        self.filtra_caio_por_atividades()
     ###############################################################################################################
         performance_dfg, start_activities, end_activities = pm4py.discover_performance_dfg(self.filtrado, case_id_key=self.ID, activity_key=self.Activity, timestamp_key=self.Timestamp)
     ################################ ESSE PARAMETRO COLOCA NO GRÁFICO O TEMPO QUE CADA ATIVIDADE DUROU ###################################
@@ -220,7 +221,7 @@ class Janela:
     
     def cria_grafo_dfg(self):
     ############################################### FILTRA OS PATHS ###############################################
-        self.filtra_grafo_por_variantes()
+        self.filtra__por_variantes()
     ###############################################################################################################
         dfg, start_activities, end_activities = pm4py.discover_dfg(self.filtrado, case_id_key=self.ID, activity_key=self.Activity, timestamp_key=self.Timestamp)
         pm4py.vis.save_vis_dfg(dfg, start_activities, end_activities, "grafico.png")#, rankdir='TB'
@@ -242,8 +243,8 @@ class Janela:
         # log['ID'] = log['ID'].astype(str)
         self.caminho_do_modelo = askopenfilename(filetypes=[("Arquivo Pnml", "*.pnml")])
         rede, inicial, final = pmnl_importer.apply(self.caminho_do_modelo)
-        conf_result = pm4py.fitness_token_based_replay(self.log, rede, inicial, final, case_id_key=self.ID, activity_key=self.Activity, timestamp_key=self.Timestamp)
-        self.lableConform.configure(text=f'mean fittness: {conf_result["average_trace_fitness"]} \n percentage fittness {conf_result["percentage_of_fitting_traces"]}')
+        duda_result = pm4py.fitness_token_based_replay(self.log, rede, inicial, final, case_id_key=self.ID, activity_key=self.Activity, timestamp_key=self.Timestamp)
+        self.lableConform.configure(text=f'mean fittness: {duda_result["average_trace_fitness"]} \n percentage fittness {duda_result["percentage_of_fitting_traces"]}')
         return
     
     def media_duracao_atividades(self):

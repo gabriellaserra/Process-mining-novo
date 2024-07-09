@@ -5,6 +5,7 @@ import customtkinter as s
 from Janela.Janela import *
 
 raiz = s.CTk(className='Proces Mining GUI')
+raiz.title('CABETUDA MINNING ltda.')
 s.set_appearance_mode("system")
 s.set_default_color_theme("dark-blue")
 raiz.geometry('960x540')
