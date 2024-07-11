@@ -2,6 +2,7 @@ from tkinter import *
 import tkinter as tk
 from tkinter.filedialog import askopenfilename
 import customtkinter as s
+import CTkMessagebox
 import os
 from PIL import Image, ImageTk
 import pm4py
@@ -73,14 +74,20 @@ class Janela:
         self.botaoFrequencia = s.CTkButton(self.frameTOP, text="Gráfico de Frequência", image=self.arqFreq, hover_color=None, fg_color="transparent", command=lambda: self.cria_grafo_dfg())
         self.botaoFrequencia.pack(side='left', pady=10)
 
-        self.botaoPerformance = s.CTkButton(self.frameTOP, text="Gráfico de Performace", image=self.arqPerform, hover_color=None, fg_color="transparent", command=lambda: self.cria_grafo_duracao()) #
+        self.botaoPerformance = s.CTkButton(self.frameTOP, text="Gráfico de Performace", image=self.arqPerform, hover_color=None, fg_color="transparent", command=lambda: self.cria_grafo_duracao()) 
         self.botaoPerformance.pack(side='left', pady=10)
 
         self.botaoPetriNet = s.CTkButton(self.frameTOP, text="Gráfico PetriNet", image=self.arqPetri, hover_color=None, fg_color="transparent", command=lambda: self.cria_grafo_petri_net())
         self.botaoPetriNet.pack(side='left', pady=10)
 
-        # Setando sempre o modo noturno:
-        s.set_appearance_mode("Dark")
+        #Switch:
+        self.switch_var = s.StringVar(value="on")
+        self.switch = s.CTkSwitch(self.frameTOP, text=None, variable=self.switch_var, onvalue="on", offvalue="off", command=lambda: self.modo_escuro())
+        self.switch.pack(side='right')
+
+        #Combo:
+        self.agg_measure = s.CTkComboBox(self.frame_lateral, values=['mean', 'median', 'min', 'max', 'sum'], command=lambda: self.agg_duracao_atividades)
+        self.agg_measure.pack(side='top')
 
         return
 
@@ -116,28 +123,28 @@ class Janela:
         return
     
     def janela_define_chaves(self):
-        self.raizColunas= s.CTkToplevel(self.raiz)
-        self.raizColunas.transient(self.raiz)
-        self.raizColunas.grab_set()
+        self.raizCaio= s.CTkToplevel(self.raiz)
+        self.raizCaio.transient(self.raiz)
+        self.raizCaio.grab_set()
 
-        self.listID = s.CTkComboBox(self.raizColunas, values=self.dataframe.columns)
+        self.listID = s.CTkComboBox(self.raizCaio, values=self.dataframe.columns)
         self.listID.set("Case ID")
         self.listID.pack()
         
-        self.listTimestampInicio = s.CTkComboBox(self.raizColunas, values=self.dataframe.columns)
+        self.listTimestampInicio = s.CTkComboBox(self.raizCaio, values=self.dataframe.columns)
         self.listTimestampInicio.set("Timestamp: Início")
         self.listTimestampInicio.pack()
 
-        self.listTimestampFinal = s.CTkComboBox(self.raizColunas, values=self.dataframe.columns)
+        self.listTimestampFinal = s.CTkComboBox(self.raizCaio, values=self.dataframe.columns)
         self.listTimestampFinal.set("Timestamp: Final")
         self.listTimestampFinal.pack()
 
 
-        self.listActivity = s.CTkComboBox(self.raizColunas, values=self.dataframe.columns)
+        self.listActivity = s.CTkComboBox(self.raizCaio, values=self.dataframe.columns)
         self.listActivity.set("Activity")
         self.listActivity.pack()
 
-        botaoAplicar = s.CTkButton(self.raizColunas, text='Aplicar', command=lambda: self.define_chaves())
+        botaoAplicar = s.CTkButton(self.raizCaio, text='Aplicar', command=lambda: self.define_chaves())
         botaoAplicar.pack()
         
         return
@@ -152,11 +159,10 @@ class Janela:
         try:
             self.log = pm4py.format_dataframe(self.dataframe, case_id= self.listID.get(), activity_key= self.listActivity.get(), timestamp_key=self.listTimestampFinal.get())
 
-            # self.media_duracao_atividades() não vai mais ser chamada aqui
-        except:
-            self.avisos('Selecione uma coluna que exista no arquivo')
+        except Exception as e:
+            self.avisos(f'Selecione uma coluna que exista no arquivo\n {e}')
 
-        return self.raizColunas.destroy()
+        return self.raizCaio.destroy()
 
 
     def exibe_grafico(self, caminho):
@@ -173,7 +179,7 @@ class Janela:
             self.image_label.image = ctk_image
         return
     
-    def filtra__por_variantes(self):
+    def filtra_grafo_por_variantes(self):
         try:
             self.log.fillna({self.Timestamp: 0},inplace=True)
             self.log[self.Timestamp] = pd.to_datetime(self.log[self.Timestamp])
@@ -186,12 +192,11 @@ class Janela:
             self.avisos(type(e).__name__)
 
         self.filtradoPath = pm4py.filtering.filter_variants_by_coverage_percentage(self.log, self.slider_Paths.get(), case_id_key=self.ID, activity_key=self.Activity, timestamp_key=self.Timestamp)
-        # self.filtrado = self.filtrado.drop('Unnamed: 0', axis=1, inplace=True)
         return
 
     
        
-    def filtra_caio_por_atividades(self):
+    def filtra_grafo_por_atividades(self):
         # Obter valor do slider
         bet = self.slider_Activities.get()
         # Obter a contagem das atividades
@@ -209,8 +214,8 @@ class Janela:
 
     def cria_grafo_duracao(self):
     ############################################### FILTRA OS PATHS ###############################################
-        self.filtra__por_variantes()
-        self.filtra_caio_por_atividades()
+        self.filtra_grafo_por_variantes()
+        self.filtra_grafo_por_atividades()
     ###############################################################################################################
         performance_dfg, start_activities, end_activities = pm4py.discover_performance_dfg(self.filtrado, case_id_key=self.ID, activity_key=self.Activity, timestamp_key=self.Timestamp)
     ################################ ESSE PARAMETRO COLOCA NO GRÁFICO O TEMPO QUE CADA ATIVIDADE DUROU ###################################
@@ -221,7 +226,8 @@ class Janela:
     
     def cria_grafo_dfg(self):
     ############################################### FILTRA OS PATHS ###############################################
-        self.filtra__por_variantes()
+        self.filtra_grafo_por_variantes()
+        self.filtra_grafo_por_atividades()
     ###############################################################################################################
         dfg, start_activities, end_activities = pm4py.discover_dfg(self.filtrado, case_id_key=self.ID, activity_key=self.Activity, timestamp_key=self.Timestamp)
         pm4py.vis.save_vis_dfg(dfg, start_activities, end_activities, "grafico.png")#, rankdir='TB'
@@ -232,6 +238,7 @@ class Janela:
     def cria_grafo_petri_net(self):
     ############################################### FILTRA OS PATHS ###############################################
         self.filtra_grafo_por_variantes()
+        self.filtra_grafo_por_atividades()
     ###############################################################################################################
         pn, ini, fim = pm4py.discover_petri_net_inductive(self.filtrado)
         pm4py.vis.save_vis_petri_net(pn, ini, fim, "grafico_PetriNet.png")
@@ -247,29 +254,30 @@ class Janela:
         self.lableConform.configure(text=f'mean fittness: {duda_result["average_trace_fitness"]} \n percentage fittness {duda_result["percentage_of_fitting_traces"]}')
         return
     
-    def media_duracao_atividades(self):
-        media_atividades= pm4py.get_service_time(self.log, start_timestamp_key=self.listTimestampInicio.get(), aggregation_measure='average')
+    def agg_duracao_atividades(self, measure):
+        
+        try:
+            media_atividades= pm4py.get_service_time(self.log, start_timestamp_key=self.listTimestampInicio.get(), aggregation_measure=measure)
 
-        raizMedia= s.CTkToplevel(self.raiz)
-        raizMedia.transient(self.raiz)
-
-        labelMedia = s.CTkLabel(raizMedia, text = media_atividades)
-        labelMedia.pack()
+            labelMedia = s.CTkLabel(self.frame_grafico, text = media_atividades)
+            labelMedia.pack(side='bottom')
+        except Exception as e:
+            self.avisos(type(e).__name__)
         return
     
     # pensando se não faço isso ser uma classe
     def avisos(self, nome_do_erro):
-        warning_window = s.CTkToplevel(self.raiz)
-        warning_window.geometry("300x150")
-        warning_window.title("Aviso")
+        warning_window = CTkMessagebox.CTkMessagebox(self.raiz, title = 'AVISO!', message = f"Ocorreu um erro do tipo: \n{nome_do_erro}", text_color="red")
+        # warning_window.geometry("300x150")
+        # warning_window.title("Aviso")
 
-        warning_window.transient(self.raiz)
-        warning_window.grab_set()
+        # warning_window.transient(self.raiz)
+        # warning_window.grab_set()
 
-        warning_label = s.CTkLabel(warning_window, text=f"Ocorreu um erro do tipo: \n{nome_do_erro}", text_color="red")
-        warning_label.pack(pady=20, padx=20)
+        # warning_label = s.CTkLabel(warning_window, text=f"Ocorreu um erro do tipo: \n{nome_do_erro}", text_color="red")
+        # warning_label.pack(pady=20, padx=20)
 
         
-        close_button = s.CTkButton(warning_window, text="Fechar", command=warning_window.destroy)
-        close_button.pack(pady=10)
+        # close_button = s.CTkButton(warning_window, text="Fechar", command=warning_window.destroy)
+        # close_button.pack(pady=10)
         return
