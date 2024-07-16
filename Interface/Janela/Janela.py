@@ -2,7 +2,7 @@ from tkinter import *
 import tkinter as tk
 from tkinter.filedialog import askopenfilename
 import customtkinter as s
-import CTkMessagebox
+# import CTkMessagebox
 import os
 from PIL import Image, ImageTk
 import pm4py
@@ -81,9 +81,9 @@ class Janela:
         self.botaoPetriNet.pack(side='left', pady=10)
 
         #Switch:
-        self.switch_var = s.StringVar(value="on")
-        self.switch = s.CTkSwitch(self.frameTOP, text=None, variable=self.switch_var, onvalue="on", offvalue="off", command=lambda: self.modo_escuro())
-        self.switch.pack(side='right')
+        # self.switch_var = s.StringVar(value="on")
+        # self.switch = s.CTkSwitch(self.frameTOP, text=None, variable=self.switch_var, onvalue="on", offvalue="off", command=lambda: self.modo_escuro())
+        # self.switch.pack(side='right')
 
         #Combo:
         self.agg_measure = s.CTkComboBox(self.frame_lateral, values=['mean', 'median', 'min', 'max', 'sum'], command=lambda: self.agg_duracao_atividades)
@@ -92,11 +92,11 @@ class Janela:
         return
 
 
-    def modo_escuro(self):
-        if self.switch.get() == "on":
-            s.set_appearance_mode("Dark")
-        else:
-            s.set_appearance_mode("Light")
+    # def modo_escuro(self):
+    #     if self.switch.get() == "on":
+    #         s.set_appearance_mode("Dark")
+    #     else:
+    #         s.set_appearance_mode("Light")
 
     
     def escolhe_arquivo(self):
@@ -153,7 +153,7 @@ class Janela:
     def define_chaves(self):
         ##REDEFININDO AS VARIÁVEIS PORQUE PELO VISTO O TKINTER NÃO RECONHECE COMO VARIÁVEL DA JANELA PRINCIPAL OS WIDGETS CRIADOS EM JANELAS TIPO Toplevel()
         self.ID = self.listID.get()
-        self.Timestamp = self.listTimestampFinal.get()
+        self.Timestamp = self.listTimestampInicio.get()
         self.Activity = self.listActivity.get()
         ########################################################################################################################################
         try:
@@ -266,8 +266,8 @@ class Janela:
         return
     
     # pensando se não faço isso ser uma classe
-    def avisos(self, nome_do_erro):
-        warning_window = CTkMessagebox.CTkMessagebox(self.raiz, title = 'AVISO!', message = f"Ocorreu um erro do tipo: \n{nome_do_erro}", text_color="red")
+    # def avisos(self, nome_do_erro):
+    #     warning_window = CTkMessagebox.CTkMessagebox(self.raiz, title = 'AVISO!', message = f"Ocorreu um erro do tipo: \n{nome_do_erro}", text_color="red")
         # warning_window.geometry("300x150")
         # warning_window.title("Aviso")
 
