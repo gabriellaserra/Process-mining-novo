@@ -2,7 +2,7 @@ from tkinter import *
 import tkinter as tk
 from tkinter.filedialog import askopenfilename
 import customtkinter as s
-# import CTkMessagebox
+import CTkMessagebox
 import os
 from PIL import Image, ImageTk
 import pm4py
@@ -55,6 +55,9 @@ class Janela:
         self.image_label = s.CTkLabel(self.frame_grafico, text=None)
         self.image_label.pack()
 
+        self.label_agg_measure = s.CTkLabel(self.frame_grafico, text=None, font=('Arial', 12))
+        self.label_agg_measure.pack(side='bottom')
+
         # Sliders:
         self.slider_Activities = s.CTkSlider(self.frame_escala, from_=1, to=0, orientation='vertical')
         self.slider_Activities.set(0)
@@ -77,7 +80,7 @@ class Janela:
         self.botaoPerformance = s.CTkButton(self.frameTOP, text="Gráfico de Performace", image=self.arqPerform, hover_color=None, fg_color="transparent", command=lambda: self.cria_grafo_duracao()) 
         self.botaoPerformance.pack(side='left', pady=10)
 
-        self.botaoPetriNet = s.CTkButton(self.frameTOP, text="Gráfico PetriNet", image=self.arqPetri, hover_color=None, fg_color="transparent", command=lambda: self.cria_grafo_petri_net())
+        self.botaoPetriNet = s.CTkButton(self.frameTOP, text="Gráfico PetriNet", image=self.arqPetri, hover_color=None, fg_color="transparent", command=lambda _: self.cria_grafo_petri_net())
         self.botaoPetriNet.pack(side='left', pady=10)
 
         #Switch:
@@ -86,18 +89,19 @@ class Janela:
         # self.switch.pack(side='right')
 
         #Combo:
-        self.agg_measure = s.CTkComboBox(self.frame_lateral, values=['mean', 'median', 'min', 'max', 'sum'], command=lambda: self.agg_duracao_atividades)
+        self.agg_measure = s.CTkComboBox(self.frame_lateral, values=['mean', 'median', 'min', 'max', 'sum'], command=lambda _: self.agg_duracao_atividades(self.agg_measure.get()))
         self.agg_measure.pack(side='top')
+
 
         return
 
-
-    # def modo_escuro(self):
+# Não usado porque o nome dos gráficos ficam invisíveis no modo claro
+    def modo_escuro(self):
     #     if self.switch.get() == "on":
     #         s.set_appearance_mode("Dark")
     #     else:
     #         s.set_appearance_mode("Light")
-
+        return
     
     def escolhe_arquivo(self):
         self.caminho_do_arquivo = askopenfilename(filetypes=[ ("Arquivo Excel", "*.xlsx"),("Arquivo CSV", "*.csv"), ("Arquivo XES", '*.xes')])
@@ -255,29 +259,14 @@ class Janela:
         return
     
     def agg_duracao_atividades(self, measure):
-        
         try:
-            media_atividades= pm4py.get_service_time(self.log, start_timestamp_key=self.listTimestampInicio.get(), aggregation_measure=measure)
+            media_atividades= pm4py.get_service_time(self.log, start_timestamp_key=self.Timestamp, aggregation_measure=measure)
 
-            labelMedia = s.CTkLabel(self.frame_grafico, text = media_atividades)
-            labelMedia.pack(side='bottom')
+            self.label_agg_measure.configure(text = media_atividades)
         except Exception as e:
             self.avisos(type(e).__name__)
         return
     
     # pensando se não faço isso ser uma classe
-    # def avisos(self, nome_do_erro):
-    #     warning_window = CTkMessagebox.CTkMessagebox(self.raiz, title = 'AVISO!', message = f"Ocorreu um erro do tipo: \n{nome_do_erro}", text_color="red")
-        # warning_window.geometry("300x150")
-        # warning_window.title("Aviso")
-
-        # warning_window.transient(self.raiz)
-        # warning_window.grab_set()
-
-        # warning_label = s.CTkLabel(warning_window, text=f"Ocorreu um erro do tipo: \n{nome_do_erro}", text_color="red")
-        # warning_label.pack(pady=20, padx=20)
-
-        
-        # close_button = s.CTkButton(warning_window, text="Fechar", command=warning_window.destroy)
-        # close_button.pack(pady=10)
-        return
+    def avisos(self, nome_do_erro):
+        return CTkMessagebox.CTkMessagebox(self.raiz, title = 'AVISO!', message = f"Ocorreu um erro do tipo: \n{nome_do_erro}")
