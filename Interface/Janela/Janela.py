@@ -30,7 +30,7 @@ class Janela:
 
         #Frame inferior da análise de conformidade:
         self.frameConform = s.CTkFrame(raiz)
-        self.frameConform.pack(side='right', fill='both')
+        self.frameConform.pack(side='bottom', fill='both')
 
         # Imagens dos botões:
         self.arq = s.CTkImage(light_image=Image.open('Interface\\Janela\\iconArq.png'), dark_image=Image.open('Interface\\Janela\\iconArq.png'), size=(80,80))
@@ -50,7 +50,7 @@ class Janela:
         self.label_escalaP.place(relx=0.7, rely=0.1, anchor= CENTER)
 
         self.lableConform = s.CTkLabel(self.frameConform, text=None, font=('Arial', 20))
-        self.lableConform.pack(side = 'left')
+        self.lableConform.pack()
 
         self.image_label = s.CTkLabel(self.frame_grafico, text=None)
         self.image_label.pack()
@@ -80,7 +80,7 @@ class Janela:
         self.botaoPerformance = s.CTkButton(self.frameTOP, text="Gráfico de Performace", image=self.arqPerform, hover_color=None, fg_color="transparent", command=lambda: self.cria_grafo_duracao()) 
         self.botaoPerformance.pack(side='left', pady=10)
 
-        self.botaoPetriNet = s.CTkButton(self.frameTOP, text="Gráfico PetriNet", image=self.arqPetri, hover_color=None, fg_color="transparent", command=lambda _: self.cria_grafo_petri_net())
+        self.botaoPetriNet = s.CTkButton(self.frameTOP, text="Gráfico PetriNet", image=self.arqPetri, hover_color=None, fg_color="transparent", command=lambda: self.cria_grafo_petri_net())
         self.botaoPetriNet.pack(side='left', pady=10)
 
         #Switch:
@@ -117,9 +117,11 @@ class Janela:
 
             elif tipoArq[-1] in 'xes':
                 self.dataframe = pm4py.read_xes(self.caminho_do_arquivo)
-            
-            self.dataframe.drop('Unnamed: 0', axis = 1, inplace=True)
 
+            try:
+                self.dataframe.drop('Unnamed: 0', axis = 1, inplace=True)
+            except:
+                pass
             return self.janela_define_chaves()
         except Exception as e:
             self.avisos(f"Selecione um arquivo!\nerro: {e}")
@@ -173,7 +175,7 @@ class Janela:
         caminho = './'+caminho
         if caminho:
             tamanho_grafico_largura = 1340 
-            tamanho_grafico_altura = 110
+            tamanho_grafico_altura = 300
             # Carrega a nova imagem
             pil_image = Image.open(caminho)
             ctk_image = s.CTkImage(light_image=pil_image, dark_image=pil_image, size= (tamanho_grafico_largura, tamanho_grafico_altura))
@@ -254,8 +256,12 @@ class Janela:
         # log['ID'] = log['ID'].astype(str)
         self.caminho_do_modelo = askopenfilename(filetypes=[("Arquivo Pnml", "*.pnml")])
         rede, inicial, final = pmnl_importer.apply(self.caminho_do_modelo)
-        duda_result = pm4py.fitness_token_based_replay(self.log, rede, inicial, final, case_id_key=self.ID, activity_key=self.Activity, timestamp_key=self.Timestamp)
-        self.lableConform.configure(text=f'mean fittness: {duda_result["average_trace_fitness"]} \n percentage fittness {duda_result["percentage_of_fitting_traces"]}')
+        try:
+            duda_result = pm4py.fitness_token_based_replay(self.log, rede, inicial, final, case_id_key=self.ID, activity_key=self.Activity, timestamp_key=self.Timestamp)
+            self.lableConform.configure(text=f'mean fittness: {duda_result["average_trace_fitness"]} \n percentage fittness {duda_result["percentage_of_fitting_traces"]}')
+        except Exception as e:
+             self.avisos(f'selecione um log de eventos primeiro!\n{type(e).__name__}')
+
         return
     
     def agg_duracao_atividades(self, measure):
