@@ -1,3 +1,9 @@
+
+# pip install pm4py
+# pip install pandas
+# pip install customtkinter
+# pip install CTkMessagebox
+
 from tkinter import *
 import tkinter as tk
 import customtkinter as s

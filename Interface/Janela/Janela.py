@@ -1,6 +1,8 @@
+from datetime import timedelta
 from tkinter import *
 import tkinter as tk
 from tkinter.filedialog import askopenfilename
+from typing import OrderedDict
 import customtkinter as s
 import CTkMessagebox
 import os
@@ -57,6 +59,7 @@ class Janela:
 
         self.label_agg_measure = s.CTkLabel(self.frame_grafico, text=None, font=('Arial', 12))
         self.label_agg_measure.pack(side='bottom')
+
 
         # Sliders:
         self.slider_Activities = s.CTkSlider(self.frame_escala, from_=1, to=0, orientation='vertical')
@@ -239,6 +242,7 @@ class Janela:
         pm4py.vis.save_vis_dfg(dfg, start_activities, end_activities, "grafico.png")#, rankdir='TB'
 
         self.exibe_grafico("grafico.png")
+        
         return
     
     def cria_grafo_petri_net(self):
@@ -250,6 +254,7 @@ class Janela:
         pm4py.vis.save_vis_petri_net(pn, ini, fim, "grafico_PetriNet.png")
 
         self.exibe_grafico("grafico_PetriNet.png")
+        
         return
     
     def analize_conformidade(self):
@@ -264,14 +269,23 @@ class Janela:
 
         return
     
+    from datetime import  datetime, timedelta
+    from collections import OrderedDict
+
     def agg_duracao_atividades(self, measure):
         try:
             media_atividades= pm4py.get_service_time(self.log, start_timestamp_key=self.Timestamp, aggregation_measure=measure)
+            media_atividades = OrderedDict(media_atividades)
+            mensagem = ''
+            for atividade,segundos in media_atividades.items():
+                media_horas = timedelta(seconds=segundos)
+                mensagem += f"{atividade} - {media_horas} horas | "
+            self.label_agg_measure.configure(text = mensagem)
 
-            self.label_agg_measure.configure(text = media_atividades)
         except Exception as e:
             self.avisos(type(e).__name__)
         return
+    
     
     # pensando se não faço isso ser uma classe
     def avisos(self, nome_do_erro):
