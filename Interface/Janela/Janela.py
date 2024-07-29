@@ -11,6 +11,9 @@ import pm4py
 from pm4py.objects.petri_net.importer import importer as pmnl_importer
 import pandas as pd
 
+from datetime import  datetime, timedelta
+from collections import OrderedDict
+
 class Janela:
     def __init__(self, raiz):
 
@@ -42,6 +45,9 @@ class Janela:
         self.arqNot = s.CTkImage(light_image=Image.open('Interface\\Janela\\mode.png'), dark_image=Image.open('Interface\\Janela\\modeDark.png'), size=(20,20))
 
         # Labels:
+        self.label_aux_agg_duracao = s.CTkLabel(self.frame_lateral, text="ESCOLHA UM DE AGREGAÇÃO PARA DURAÇÃO")
+        self.label_aux_agg_duracao.pack()
+
         self.label_arquivo = s.CTkLabel(self.frameTOP, text="Nenhum arquivo selecionado")
         self.label_arquivo.pack(side='bottom')
 
@@ -75,7 +81,7 @@ class Janela:
         self.botaoArquivo.pack(side='left')
 
         self.botaoConform = s.CTkButton(self.frame_lateral, text='Análise de Conformidade', command=lambda: self.analize_conformidade())
-        self.botaoConform.pack()
+        self.botaoConform.pack(before = self.label_aux_agg_duracao)
 
         self.botaoFrequencia = s.CTkButton(self.frameTOP, text="Gráfico de Frequência", image=self.arqFreq, hover_color=None, fg_color="transparent", command=lambda: self.cria_grafo_dfg())
         self.botaoFrequencia.pack(side='left', pady=10)
@@ -93,7 +99,7 @@ class Janela:
 
         #Combo:
         self.agg_measure = s.CTkComboBox(self.frame_lateral, values=['mean', 'median', 'min', 'max', 'sum'], command=lambda _: self.agg_duracao_atividades(self.agg_measure.get()))
-        self.agg_measure.pack(side='top')
+        self.agg_measure.pack(side='bottom')
 
 
         return
@@ -263,23 +269,21 @@ class Janela:
         rede, inicial, final = pmnl_importer.apply(self.caminho_do_modelo)
         try:
             duda_result = pm4py.fitness_token_based_replay(self.log, rede, inicial, final, case_id_key=self.ID, activity_key=self.Activity, timestamp_key=self.Timestamp)
-            self.lableConform.configure(text=f'mean fittness: {duda_result["average_trace_fitness"]} \n percentage fittness {duda_result["percentage_of_fitting_traces"]}')
+            self.lableConform.configure(text=f'média fittness: %.3f \n fittness: %.2f %%'%(duda_result["average_trace_fitness"], duda_result["percentage_of_fitting_traces"]))
         except Exception as e:
-             self.avisos(f'selecione um log de eventos primeiro!\n{type(e).__name__}')
+             self.avisos(f'selecione um gráfico primeiro!\n{type(e).__name__}')
 
         return
     
-    from datetime import  datetime, timedelta
-    from collections import OrderedDict
 
     def agg_duracao_atividades(self, measure):
         try:
             media_atividades= pm4py.get_service_time(self.log, start_timestamp_key=self.Timestamp, aggregation_measure=measure)
-            media_atividades = OrderedDict(media_atividades)
+            # media_atividades = OrderedDict(media_atividades)
             mensagem = ''
             for atividade,segundos in media_atividades.items():
                 media_horas = timedelta(seconds=segundos)
-                mensagem += f"{atividade} - {media_horas} horas | "
+                mensagem += f"| {atividade} - {media_horas} horas |\n"
             self.label_agg_measure.configure(text = mensagem)
 
         except Exception as e:
