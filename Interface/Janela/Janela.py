@@ -45,7 +45,7 @@ class Janela:
         self.arqNot = s.CTkImage(light_image=Image.open('Interface\\Janela\\mode.png'), dark_image=Image.open('Interface\\Janela\\modeDark.png'), size=(20,20))
 
         # Labels:
-        self.label_aux_agg_duracao = s.CTkLabel(self.frame_lateral, text="ESCOLHA UM DE AGREGAÇÃO PARA DURAÇÃO")
+        self.label_aux_agg_duracao = s.CTkLabel(self.frame_lateral, text="MÉTRICAS DE DURAÇÃO")
         self.label_aux_agg_duracao.pack()
 
         self.label_arquivo = s.CTkLabel(self.frameTOP, text="Nenhum arquivo selecionado")
@@ -63,7 +63,7 @@ class Janela:
         self.image_label = s.CTkLabel(self.frame_grafico, text=None)
         self.image_label.pack()
 
-        self.label_agg_measure = s.CTkLabel(self.frame_grafico, text=None, font=('Arial', 12))
+        self.label_agg_measure = s.CTkLabel(self.frame_grafico, text=None, font=('Arial', 20))
         self.label_agg_measure.pack(side='bottom')
 
 
@@ -82,6 +82,9 @@ class Janela:
 
         self.botaoConform = s.CTkButton(self.frame_lateral, text='Análise de Conformidade', command=lambda: self.analize_conformidade())
         self.botaoConform.pack(before = self.label_aux_agg_duracao)
+
+        self.botaoInfo= s.CTkButton(self.frame_lateral, text='Informações', command=self.exibe_informacao)
+        self.botaoInfo.pack(before = self.botaoConform)
 
         self.botaoFrequencia = s.CTkButton(self.frameTOP, text="Gráfico de Frequência", image=self.arqFreq, hover_color=None, fg_color="transparent", command=lambda: self.cria_grafo_dfg())
         self.botaoFrequencia.pack(side='left', pady=10)
@@ -183,7 +186,7 @@ class Janela:
     def exibe_grafico(self, caminho):
         caminho = './'+caminho
         if caminho:
-            tamanho_grafico_largura = 1340 
+            tamanho_grafico_largura = 1320
             tamanho_grafico_altura = 300
             # Carrega a nova imagem
             pil_image = Image.open(caminho)
@@ -193,7 +196,7 @@ class Janela:
             self.image_label.configure(image=ctk_image)
             self.image_label.image = ctk_image
         return
-    
+
     def filtra_grafo_por_variantes(self):
         try:
             self.log.fillna({self.Timestamp: 0},inplace=True)
@@ -269,7 +272,8 @@ class Janela:
         rede, inicial, final = pmnl_importer.apply(self.caminho_do_modelo)
         try:
             duda_result = pm4py.fitness_token_based_replay(self.log, rede, inicial, final, case_id_key=self.ID, activity_key=self.Activity, timestamp_key=self.Timestamp)
-            self.lableConform.configure(text=f'média fittness: %.3f \n fittness: %.2f %%'%(duda_result["average_trace_fitness"], duda_result["percentage_of_fitting_traces"]))
+            precision_value = pm4py.conformance.precision_token_based_replay(self.log, rede, inicial, final, case_id_key=self.ID, activity_key=self.Activity, timestamp_key=self.Timestamp)
+            self.lableConform.configure(text=f'Fitness: %.2f Precision: %.2f'%(duda_result["average_trace_fitness"],precision_value))
         except Exception as e:
              self.avisos(f'selecione um gráfico primeiro!\n{type(e).__name__}')
 
@@ -284,13 +288,20 @@ class Janela:
             for atividade,segundos in media_atividades.items():
                 segundos_arredondados = round(segundos)
                 media_horas = timedelta(seconds=segundos_arredondados)
-                mensagem += f"| {atividade} - {media_horas} horas |\n"
+                mensagem += f"| {atividade} - {media_horas} HH:MM:SS |\n"
             self.label_agg_measure.configure(text = mensagem)
 
         except Exception as e:
             self.avisos(type(e).__name__)
         return
     
+    def exibe_informacao(self):
+        janela_info = tk.Toplevel(root)
+        janela_info.title("Informações sobre Análise de Conformidade")
+        janela_info.geometry("200x100")
+        label_info = tk.Label(janela_info, text="oii bet aqui")
+        label_info.pack(pady=10)
+        return
     
     # pensando se não faço isso ser uma classe
     def avisos(self, nome_do_erro):
