@@ -282,7 +282,8 @@ class Janela:
             # media_atividades = OrderedDict(media_atividades)
             mensagem = ''
             for atividade,segundos in media_atividades.items():
-                media_horas = timedelta(seconds=segundos)
+                segundos_arredondados = round(segundos)
+                media_horas = timedelta(seconds=segundos_arredondados)
                 mensagem += f"| {atividade} - {media_horas} horas |\n"
             self.label_agg_measure.configure(text = mensagem)
 
