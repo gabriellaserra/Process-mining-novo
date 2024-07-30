@@ -296,11 +296,14 @@ class Janela:
         return
     
     def exibe_informacao(self):
-        janela_info = tk.Toplevel(root)
-        janela_info.title("Informações sobre Análise de Conformidade")
-        janela_info.geometry("200x100")
-        label_info = tk.Label(janela_info, text="oii bet aqui")
-        label_info.pack(pady=10)
+        self.raizBet = s.CTkToplevel(self.raiz)
+        self.raizBet.transient(self.raiz)
+        self.raizBet.geometry("410x300")
+        self.raizBet.title("Informações sobre Análise de Conformidade")
+
+
+        titulo_info = s.CTkLabel(self.raizBet, text="Fitness mede o quanto o comportamento real de um processo \n( event log ) se alinha com o modelo predefinido (rede petri). \nEle avalia a capacidade do modelo em explicar o comportamento \n observado no processo real, indicando a proporção de traços \n observados que são compatíveis com o modelo. Um modelo com alto \n fitness consegue cobrir a maior parte do comportamento observado, \n mas pode incluir alguns comportamentos que não estão presentes \nna prática. \n \n Precision mede o quão bem o modelo exclui comportamentos que \nnão são observados no processo real (event log). Ele quantifica \n a proporção do comportamento do modelo que é realmente visto no \n processo real. Alta precisão significa que o modelo é rigoroso \n em não permitir comportamentos adicionais que não foram \n observados, embora possa não capturar todo o comportamento \n real.")
+        titulo_info.pack(pady=20)
         return
     
     # pensando se não faço isso ser uma classe
