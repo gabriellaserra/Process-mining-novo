@@ -63,7 +63,7 @@ class Janela:
         self.image_label = s.CTkLabel(self.frame_grafico, text=None)
         self.image_label.pack()
 
-        self.label_agg_measure = s.CTkLabel(self.frame_grafico, text=None, font=('Arial', 20))
+        self.label_agg_measure = s.CTkLabel(self.frame_grafico, text=None, font=('Arial', 12))
         self.label_agg_measure.pack(side='bottom')
 
 
@@ -83,8 +83,8 @@ class Janela:
         self.botaoConform = s.CTkButton(self.frame_lateral, text='Análise de Conformidade', command=lambda: self.analize_conformidade())
         self.botaoConform.pack(before = self.label_aux_agg_duracao)
 
-        self.botaoInfo= s.CTkButton(self.frame_lateral, text='Informações', command=self.exibe_informacao)
-        self.botaoInfo.pack(before = self.botaoConform)
+        self.botaoInfo= s.CTkButton(self.frameConform, text='i', command=self.exibe_informacao, width=40, height=40)
+        self.botaoInfo.pack(side='left')
 
         self.botaoFrequencia = s.CTkButton(self.frameTOP, text="Gráfico de Frequência", image=self.arqFreq, hover_color=None, fg_color="transparent", command=lambda: self.cria_grafo_dfg())
         self.botaoFrequencia.pack(side='left', pady=10)
