@@ -38,11 +38,11 @@ class Janela:
         self.frameConform.pack(side='bottom', fill='both')
 
         # Imagens dos botões:
-        self.arq = s.CTkImage(light_image=Image.open('grupo-2\\Interface\\Janela\\iconArq.png'), dark_image=Image.open('grupo-2\\Interface\\Janela\\iconArq.png'), size=(80,80))
-        self.arqPerform = s.CTkImage(light_image=Image.open('grupo-2\\Interface\\Janela\\iconPerformance.png'), dark_image=Image.open('grupo-2\\Interface\\Janela\\iconPerformanceDark.png'), size=(80,80))
-        self.arqFreq = s.CTkImage(light_image=Image.open('grupo-2\\Interface\\Janela\\iconFreq.png'), dark_image=Image.open('grupo-2\\Interface\\Janela\\iconFreqDark.png'), size=(80,80))
-        self.arqPetri = s.CTkImage(light_image=Image.open('grupo-2\\Interface\\Janela\\iconPetri.png'), dark_image=Image.open('grupo-2\\Interface\\Janela\\iconPetriDark.png'), size=(80,80))
-        self.arqNot = s.CTkImage(light_image=Image.open('grupo-2\\Interface\\Janela\\mode.png'), dark_image=Image.open('grupo-2\\Interface\\Janela\\modeDark.png'), size=(20,20))
+        self.arq = s.CTkImage(light_image=Image.open('Process-mining-novo\\Interface\\Janela\\iconArq.png'), dark_image=Image.open('Process-mining-novo\\Interface\\Janela\\iconArq.png'), size=(80,80))
+        self.arqPerform = s.CTkImage(light_image=Image.open('Process-mining-novo\\Interface\\Janela\\iconPerformance.png'), dark_image=Image.open('Process-mining-novo\\Interface\\Janela\\iconPerformanceDark.png'), size=(80,80))
+        self.arqFreq = s.CTkImage(light_image=Image.open('Process-mining-novo\\Interface\\Janela\\iconFreq.png'), dark_image=Image.open('Process-mining-novo\\Interface\\Janela\\iconFreqDark.png'), size=(80,80))
+        self.arqPetri = s.CTkImage(light_image=Image.open('Process-mining-novo\\Interface\\Janela\\iconPetri.png'), dark_image=Image.open('Process-mining-novo\\Interface\\Janela\\iconPetriDark.png'), size=(80,80))
+        self.arqNot = s.CTkImage(light_image=Image.open('Process-mining-novo\\Interface\\Janela\\mode.png'), dark_image=Image.open('Process-mining-novo\\Interface\\Janela\\modeDark.png'), size=(20,20))
 
         # Labels:
         self.label_aux_agg_duracao = s.CTkLabel(self.frame_lateral, text="MÉTRICAS DE DURAÇÃO")
