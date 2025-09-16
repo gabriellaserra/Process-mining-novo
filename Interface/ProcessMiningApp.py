@@ -3,6 +3,8 @@
 # pip install pandas
 # pip install customtkinter
 # pip install CTkMessagebox
+# pip install openpyxl
+# pip install Graphviz
 
 from tkinter import *
 import tkinter as tk
